@@ -1,0 +1,4 @@
+UPDATE `sale_order_line_1` SET `product_id`='17',
+                `product_name`='apple milk shake',`product_template_id`='17',`qty`='3',
+                `uom`='1',`price`='210.0',`discount`='',`special_notes`='',
+                `extra_ids`='' WHERE `order_line_id`='162' 

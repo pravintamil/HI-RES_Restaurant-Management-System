@@ -1,0 +1,12 @@
+set foreign_key_checks=0;
+truncate category;
+truncate customer;
+truncate driver;
+truncate product;
+truncate sale_order;
+truncate sale_order_line;
+truncate table_category;
+truncate table_details;
+truncate tax;
+truncate user;
+set foreign_key_checks=1;
