@@ -1,6 +1,5 @@
 <?php
-	// 
-        session_start();
+	session_start();
     require_once("../role.php");
     // date_default_timezone_set('UTC');
 	$data['success']=false;
@@ -21,8 +20,6 @@
     }
     include ("../db.php");
 	mysql_select_db("$db_key");
-    $f=fopen("1.txt", "w");
-    fwrite($f,"mode : ".$mode."\ndb_key : "."$db_key"."\nbranch_id : ".$branch_id."\nres_name : ".$restaurant_name."");
     if($mode=="change_password"){
         $pass=md5($request->pass);
         $password=md5($request->password);
@@ -73,11 +70,9 @@
         $tables2=array_intersect($tables, $tables1);
         if($tables2==$tables){
             $data['success']=true;
-            fwrite($f, " success");
         }
         else {
             $data['success']=false;
-            fwrite($f, " error");
         }
     }
     elseif ($mode=="create_first_entry") {
@@ -99,7 +94,6 @@
         $m_type = $request->m_type;
         foreach ($m_type as $key => $value) {
             if($value){
-                fwrite($f, $key."\n");
                 $p_m_type[]=$key;
             }
         }
@@ -110,11 +104,6 @@
             $p_avail=2;
         else
             $p_avail=0;
-        fwrite($f, "\n c_name $c_name \n c_descp $c_descp \n c_prior $c_prior \n d_name $d_name \n d_mobile $d_mobile \n p_name $p_name \n p_descp $p_descp \n p_prior $p_prior \n p_price $p_price \n f_type $f_type \n p_avail $p_avail \n r_name $r_name \n t_name $t_name \n t_num $t_num \n t_chairs $t_chairs \n");
-        foreach ($m_type as $key => $value) {
-            if($value)
-            fwrite($f, "$key\n");
-        }
             $q1[]="CREATE TABLE IF NOT EXISTS `$tables[0]` (`category_id` int(10) NOT NULL AUTO_INCREMENT,`name` varchar(100) NOT NULL,`desc` varchar(300) NOT NULL,`priority` int(20) NOT NULL,PRIMARY KEY (`category_id`));";
             $q1[]="CREATE TABLE IF NOT EXISTS `$tables[1]` ( `customer_id` int(10) NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `email` varchar(100) DEFAULT NULL,`phone` varchar(100) NOT NULL,`address` varchar(200) DEFAULT NULL,`pincode` varchar(10) DEFAULT NULL,`rand_id` varchar(20) DEFAULT NULL,PRIMARY KEY (`customer_id`),UNIQUE KEY `rand_id` (`rand_id`));";
             $q1[]="CREATE TABLE IF NOT EXISTS `$tables[2]` ( `driver_id` int(10) NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `phone` varchar(100) NOT NULL, PRIMARY KEY (`driver_id`));";
@@ -304,7 +293,6 @@
         $p_avail = $request->p_avail;
         foreach ($m_type as $key => $value) {
             if($value){
-                fwrite($f, $key."\n");
                 $p_m_type[]=$key;
             }
         }
@@ -335,7 +323,6 @@
         $p_avail = $request->p_avail;
         foreach ($m_type as $key => $value) {
             if($value){
-                fwrite($f, $key."\n");
                 $p_m_type[]=$key;
             }
         }
@@ -672,8 +659,6 @@
         $endDate=date("Y-m-d G:i:s", strtotime($endDate));
         $a = new DateTime($startDate);
         $b = new DateTime($endDate);
-        $s_r_b_d=fopen("s_r_b_d.txt", "w");
-        fwrite($s_r_b_d, $startDate."  \n ".$endDate);
         // $timezone=date_default_timezone_get();
         // date_default_timezone_set('UTC');
 
@@ -876,8 +861,6 @@
 
         $startDate=date("Y-m-d G:i:s", strtotime($startDate));
         $endDate=date("Y-m-d G:i:s", strtotime($endDate));
-        // $ew=fopen("err.txt", "a");
-        // fwrite($ew,"$startDate  $endDate");
         $q1="SELECT * FROM `$tables[4]` WHERE  `status` LIKE 'delivered' AND `order_date` BETWEEN '$startDate' AND '$endDate';";
         $q1=mysql_query($q1);
         while ($r1=mysql_fetch_array($q1)) {
@@ -1043,17 +1026,11 @@
     // echo "$endD<br>";
     $q1="SELECT DISTINCT DATE_FORMAT( `order_date` , '$pattern' ) AS date FROM `$tables[4]` WHERE `order_date` BETWEEN '$startD' AND '$endD' ORDER BY DATE( `order_date` ) ASC LIMIT 0 , 30";
     $e1=mysql_query($q1);
-    $f=fopen("2.txt", "w");
-    fwrite($f, "1: $q1\n");
-    fwrite($f, "p1 $pattern\n p2 $pattern1\n start $startD \n end $endD");
     // echo "$q1 <br>";
     while ($r1=mysql_fetch_array($e1)) {
         $date=$r1['date'];
-
-    fwrite($f, "date $date \n".date_default_timezone_get()."\n");
         // echo "date :$date <br>";
         $q2 =mysql_query( "SELECT * FROM `$tables[4]` WHERE `order_date` LIKE '%$date%'");
-        // fwrite($f, "2: $q2\n");
         while ($r2=mysql_fetch_array($q2)) {
             $s_o_id=$r2['sale_order_id'];
             $order_ids.=" ".$r2['sale_order_id'];
@@ -1061,7 +1038,6 @@
             // echo " id: $s_o_id ";
             $total_order=0;
             $q3=mysql_query("SELECT `qty` , `price` , `discount` FROM `$tables[5]` WHERE `order_id` ='$s_o_id'");
-            // fwrite($f, "3: $q3\n");
             while ($r4=mysql_fetch_array($q3)) {
                 $price_line=$r4['qty']*$r4['price']*(100-$r4['discount'])/100;
                 // echo " price: $price_line";
@@ -1093,7 +1069,6 @@
    }
    // echo "price month: $price_final <br>";
    // // print_r($price);
-   // fwrite($f, print_r($price));
    $data['data1']=$price;
    $data['data2']=$price1;
    return $data;
@@ -1107,23 +1082,12 @@
     $price_each=0;
     $price_final=0;
     $i=0;
-    // echo "$pattern<br>";
-    // echo "$pattern1<br>";
-    // echo "$startD<br>";
-    // echo "$endD<br>";
     $q1="SELECT DISTINCT DATE_FORMAT( `order_date` , '$pattern' ) AS date FROM `$tables[4]` WHERE  `customer_id`='$id' AND `order_date` BETWEEN '$startD' AND '$endD' ORDER BY DATE( `order_date` ) DESC LIMIT 0 , 30";
-    // $we=fopen("2.txt","w");
-    // fwrite($we, "$q1");
     $e1=mysql_query($q1);
-    // $f=fopen("2.txt", "w");
-    // fwrite($f, "1: $q1\n");
-    // echo "$q1 <br>";
     while ($r1=mysql_fetch_array($e1)) {
         $date=$r1['date'];
         // echo "date :$date <br>";
         $q2 =mysql_query( "SELECT `sale_order_id` FROM `$tables[4]` WHERE `order_date` LIKE '%$date%' AND `customer_id`='$id'");
-        // fwrite($f, "2: $q2\n");
-        // $r1=mysql_num_rows($q2);
         if ($pattern1!='Y'){
             $report1[$i]['day']=date($pattern1,strtotime($date));
             $report2[$i]['label']=date($pattern1,strtotime($date));
@@ -1136,9 +1100,6 @@
         $report2[$i]['value']=mysql_num_rows($q2);
         $i++;
    }
-   // echo "price month: $price_final <br>";
-   // // print_r($price);
-   // fwrite($f, print_r($price));
    $report['data1']=$report1;
    $report['data2']=$report2;
    return $report;
